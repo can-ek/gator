@@ -2,15 +2,20 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
 	config "github.com/can-ek/gator/config"
+	"github.com/can-ek/gator/internal/database"
+
+	_ "github.com/lib/pq"
 )
 
 type state struct {
 	configuration *config.Config
+	db            *database.Queries
 }
 
 func main() {
@@ -20,11 +25,23 @@ func main() {
 		return
 	}
 
-	currState := state{configuration: &configuration}
+	db, err := sql.Open("postgres", configuration.DBURL)
+	if err != nil {
+		fmt.Println("ERROR: Could not connect to Database:", err)
+		return
+	}
+
+	dbQueries := database.New(db)
+	currState := state{configuration: &configuration, db: dbQueries}
 	supportedCmds := commands{
 		cmds: make(map[string]func(*state, command) error),
 	}
+
 	supportedCmds.register("login", handleLogin)
+	supportedCmds.register("register", handleRegister)
+	supportedCmds.register("reset", handleReset)
+	supportedCmds.register("users", handleUsers)
+
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatal("ERROR: Missing command name")

@@ -1,14 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 func handleLogin(s *state, cmd command) error {
 	if len(cmd.args) == 0 {
-		return fmt.Errorf("Login expects username argument")
+		return fmt.Errorf("login expects username argument")
 	}
 
 	username := cmd.args[0]
-	err := s.configuration.SetUser(username)
+	_, err := s.db.GetUser(context.Background(), username)
+	if err != nil {
+		return err
+	}
+
+	err = s.configuration.SetUser(username)
 	if err != nil {
 		return err
 	}
@@ -16,5 +24,3 @@ func handleLogin(s *state, cmd command) error {
 	fmt.Println("User set to:", username)
 	return nil
 }
-
-
