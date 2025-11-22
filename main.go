@@ -43,6 +43,9 @@ func main() {
 	supportedCmds.register("users", handleUsers)
 	supportedCmds.register("agg", handleAgg)
 	supportedCmds.register("addfeed", handleAddFeed)
+	supportedCmds.register("feeds", handleFeeds)
+	supportedCmds.register("follow", handleFollow)
+	supportedCmds.register("following", handleFollowing)
 
 	args := os.Args
 	if len(args) < 2 {
