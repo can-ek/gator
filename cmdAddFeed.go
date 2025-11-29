@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func handleAddFeed(s *state, cmd command) error {
+func handleAddFeed(s *state, cmd command, user intdb.User) error {
 	if len(cmd.args) < 2 {
 		return fmt.Errorf("addfeed expects name and url arguments")
 	}
@@ -17,11 +17,6 @@ func handleAddFeed(s *state, cmd command) error {
 	name := cmd.args[0]
 	url := cmd.args[1]
 	ctx := context.Background()
-	user, err := s.db.GetUser(ctx, s.configuration.CurrentUsername)
-	if err != nil {
-		return err
-	}
-
 	currTime := time.Now()
 	params := intdb.CreateFeedParams{
 		ID:        uuid.New(),

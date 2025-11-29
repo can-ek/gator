@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func handleFollow(s *state, cmd command) error {
+func handleFollow(s *state, cmd command, user int_db.User) error {
 	if len(cmd.args) < 1 {
 		return fmt.Errorf("follow expects url argument")
 	}
@@ -19,14 +19,7 @@ func handleFollow(s *state, cmd command) error {
 	feed, err := s.db.GetFeedsByUrl(ctx, url)
 	if err != nil {
 		return err
-	}
-
-	user, err := s.db.GetUser(
-		ctx,
-		s.configuration.CurrentUsername)
-	if err != nil {
-		return err
-	}
+	}	
 
 	currTime := time.Now()
 	params := int_db.CreateFeedFollowParams{
