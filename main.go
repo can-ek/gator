@@ -42,11 +42,11 @@ func main() {
 	supportedCmds.register("reset", handleReset)
 	supportedCmds.register("users", handleUsers)
 	supportedCmds.register("agg", handleAgg)
-	supportedCmds.register("addfeed", handleAddFeed)
+	supportedCmds.register("addfeed", middlewareLoggedIn(handleAddFeed))
 	supportedCmds.register("feeds", handleFeeds)
-	supportedCmds.register("follow", handleFollow)
-	supportedCmds.register("following", handleFollowing)
-
+	supportedCmds.register("follow", middlewareLoggedIn(handleFollow))
+	supportedCmds.register("following", middlewareLoggedIn(handleFollowing))
+	supportedCmds.register("unfollow", middlewareLoggedIn(handleUnfollow))
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatal("ERROR: Missing command name")

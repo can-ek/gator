@@ -8,10 +8,10 @@ type command struct {
 }
 
 type commands struct {
-	cmds map[string]func(*state, command) error	
+	cmds map[string]func(*state, command) error
 }
 
-func (c *commands) run(s * state, cmd command) error {
+func (c *commands) run(s *state, cmd command) error {
 	if handler, exists := c.cmds[cmd.name]; exists {
 		return handler(s, cmd)
 	} else {
@@ -22,4 +22,3 @@ func (c *commands) run(s * state, cmd command) error {
 func (c *commands) register(name string, f func(*state, command) error) {
 	c.cmds[name] = f
 }
-
