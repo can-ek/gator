@@ -8,6 +8,7 @@ import (
 
 	db "github.com/can-ek/gator/internal/database"
 	rss "github.com/can-ek/gator/rss"
+	"github.com/google/uuid"
 )
 
 func handleAgg(s *state, cmd command) error {
@@ -54,8 +55,32 @@ func scrapeFeeds(s *state) error {
 		return err
 	}
 
+	fmt.Println("Found", len(rssFeed.Channel.Item), "posts")
+
 	for _, item := range rssFeed.Channel.Item {
-		fmt.Println(item.Title)
+		desc := sql.NullString{String: "", Valid: false}
+
+		if item.Description != "" {
+			desc = sql.NullString{String: item.Description, Valid: true}
+		}
+
+		parsedDate, _ := time.Parse(time.RFC1123Z, item.PubDate)
+
+		postParams := db.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   currTime,
+			UpdatedAt:   currTime,
+			Title:       item.Title,
+			Url:         item.Link,
+			Description: desc,
+			PublishedAt: parsedDate,
+			FeedID:      feed.ID,
+		}
+
+		_, err := s.db.CreatePost(ctx, postParams)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
