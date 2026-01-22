@@ -47,6 +47,7 @@ func main() {
 	supportedCmds.register("follow", middlewareLoggedIn(handleFollow))
 	supportedCmds.register("following", middlewareLoggedIn(handleFollowing))
 	supportedCmds.register("unfollow", middlewareLoggedIn(handleUnfollow))
+	supportedCmds.register("browse", middlewareLoggedIn(handleBrowse))
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatal("ERROR: Missing command name")
